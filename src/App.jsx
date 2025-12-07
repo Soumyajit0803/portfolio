@@ -1,21 +1,21 @@
-import {React, useRef, useEffect} from "react";
-import Header from './components/header/Header'
-import Homepage from './pages/homepage/Homepage'
-import About from './pages/About/About'
-import Education from './pages/Education/Education'
-import Experience from './pages/Experience/Experience'
-import Projects from './pages/Projects/Projects'
-import Contact from './pages/Contact/Contact'
-import Techstack from './pages/Techstack/Techstack'
-import CPstats from './pages/CPstats/CPstats'
-import { Analytics } from '@vercel/analytics/react';
-import "./App.css"
+import { React, useRef, useEffect } from "react";
+import Header from "./components/header/Header";
+import Homepage from "./pages/homepage/Homepage";
+import About from "./pages/About/About";
+import Education from "./pages/Education/Education";
+import Experience from "./pages/Experience/Experience";
+import Projects from "./pages/Projects/Projects";
+import Contact from "./pages/Contact/Contact";
+import Techstack from "./pages/Techstack/Techstack";
+import CPstats from "./pages/CPstats/CPstats";
+import { Analytics } from "@vercel/analytics/react";
+import "./App.css";
+import SmoothScroll from "./SmoothScroll";
 
 const App = () => {
-
-  const observer= useRef(null);
-  const bullets= useRef(null);
-  const descend= useRef(null);
+    const observer = useRef(null);
+    const bullets = useRef(null);
+    const descend = useRef(null);
 
     useEffect(() => {
         // Initialize IntersectionObserver when the component mounts
@@ -69,35 +69,36 @@ const App = () => {
         });
     };
 
+    return (
+        <SmoothScroll>
+            <div className="website">
+                <Header />
+                <div className="design left">
+                    <div className="element e1"></div>
+                    <div className="element e2"></div>
+                    <div className="element e3"></div>
+                    <div className="element e4"></div>
+                    <div className="element e5"></div>
+                </div>
+                <div className="design right">
+                    <div className="element e1"></div>
+                    <div className="element e2"></div>
+                    <div className="element e3"></div>
+                    <div className="element e4"></div>
+                    <div className="element e5"></div>
+                </div>
+                <Homepage />
+                <About />
+                <Education />
+                <CPstats />
+                {/* <Techstack /> */}
+                <Experience />
+                <Projects />
+                <Contact />
+                <Analytics />
+            </div>
+        </SmoothScroll>
+    );
+};
 
-  return (
-    <div className="website">
-      <Header />
-      <div className="design left">
-        <div className="element e1"></div>
-        <div className="element e2"></div>
-        <div className="element e3"></div>
-        <div className="element e4"></div>
-        <div className="element e5"></div>
-      </div>
-      <div className="design right">
-        <div className="element e1"></div>
-        <div className="element e2"></div>
-        <div className="element e3"></div>
-        <div className="element e4"></div>
-        <div className="element e5"></div>
-      </div>
-      <Homepage />
-      <About />
-      <Education />
-      <CPstats />
-      {/* <Techstack /> */}
-      <Experience />
-      <Projects />
-      <Contact />
-      <Analytics />
-    </div>
-  )
-}
-
-export default App
+export default App;
