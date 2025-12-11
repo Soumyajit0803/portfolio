@@ -5,31 +5,57 @@ import SplitType from "split-type";
 import { useGSAP } from "@gsap/react";
 
 const Homepage = () => {
-    // 1. Create a reference for the container and the text element
     const container = useRef();
     const nameRef = useRef();
 
-    useGSAP(() => {
-        // 2. Perform the split INSIDE the hook, where the DOM is guaranteed to exist
-        const split = new SplitType(nameRef.current, { types: "chars" });
+    useGSAP(
+        () => {
+            const split = new SplitType(nameRef.current, { types: "chars" });
 
-        // 3. Animate the split characters
-        gsap.from(split.chars, {
-            yPercent: -100,
-            rotation: 30,
-            opacity: 0,
-            duration: 1.5,
-            ease: "back.out(1.5)",
-            stagger: {
-                amount: 0.5,
-                from: "random",
-            },
-        });
+            const t = gsap.timeline({
+                defaults: { ease: "power3.out" },
+                scrollTrigger: {
+                    trigger: container.current,
+                    start: "top 80%", // when top of section hits 80% of viewport
+                    once: true,
+                },
+            });
 
-        // Optional: Revert the split when component unmounts to keep DOM clean
-        return () => split.revert();
-        
-    }, { scope: container }); // Scope ensures GSAP selectors only look inside this component
+            // 3. Animate the split characters
+            t.from(".mini-logo", { y: -50, opacity: 0, duration: 0.5, delay: 2 })
+                .from(".salutation", { y: -50, opacity: 0, duration: 0.5 })
+                .from(".page-wrap .head-wideline .wideline", { transformOrigin: "left", width: 0, duration: 0.7, opacity: 0 })
+                .from(split.chars, {
+                    yPercent: -100,
+                    rotation: 90,
+                    opacity: 0,
+                    duration: 1.5,
+                    ease: "back.out(1.5)",
+                    stagger: {
+                        amount: 0.5,
+                        from: "random",
+                    },
+                })
+                .from(".hobby", {
+                    y: 50,
+                    opacity: 0,
+                    duration: 1,
+                })
+                .from(
+                    ".about",
+                    {
+                        y: 50,
+                        opacity: 0,
+                        duration: 1,
+                    },
+                    "-=0.5"
+                );
+
+            // Optional: Revert the split when component unmounts to keep DOM clean
+            return () => split.revert();
+        },
+        { scope: container }
+    ); // Scope ensures GSAP selectors only look inside this component
 
     return (
         <div className="page-wrap" ref={container}>
@@ -39,14 +65,17 @@ const Homepage = () => {
                     width={25}
                     style={{ margin: "1rem 0" }}
                     alt="Logo"
+                    className="mini-logo"
                 />
                 <div className="head-wideline">
                     <div className="salutation">Hi, I'm</div>
-                    <div className="wideline right-to-left"></div>
+                    <div className="wideline"></div>
                 </div>
 
                 {/* Attach the ref here so SplitType can find it */}
-                <div className="name" ref={nameRef}>Soumyajit</div>
+                <div className="name" ref={nameRef}>
+                    Soumyajit
+                </div>
 
                 <div className="hobby">
                     I am a <Dynamic />
