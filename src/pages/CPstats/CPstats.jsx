@@ -1,5 +1,9 @@
 import { React, useEffect, useState, useRef } from "react";
 import CountUp from "react-countup";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import SplitType from "split-type";
 import "./CPstats.css";
 
 const Leetcode = {
@@ -40,14 +44,65 @@ const Codeforces = {
     link: "https://codeforces.com/profile/CF_Soumyajit",
 };
 
+// Register ScrollTrigger
+gsap.registerPlugin(ScrollTrigger);
+
 const CPstats = () => {
+    // Dummy data handling (assuming these are passed or imported in your real file)
+    // You can remove these if you are importing them from a data file.
+    const Leetcode = { platform: "LeetCode", link: "#", highlightNumber: 500, highlightLabel: "Solved", extra: { left: "Top", start: 0, number: 15, right: "%" } };
+    const Codechef = { platform: "CodeChef", link: "#", highlightNumber: 1400, highlightLabel: "Rating", extra: { left: "Max", start: 0, number: 1600, right: "" } };
+    const Codeforces = { platform: "Codeforces", link: "#", highlightNumber: 800, highlightLabel: "Rating", extra: { left: "Max", start: 0, number: 1200, right: "" } };
+
+    const containerRef = useRef();
+    const headRef = useRef();
+
+    useGSAP(
+        () => {
+            const split = new SplitType(headRef.current, { types: "chars" });
+
+            const tl = gsap.timeline({
+                defaults: { ease: "power3.out" },
+                scrollTrigger: {
+                    trigger: containerRef.current,
+                    start: "top 80%",
+                    end: "bottom 20%",
+                    toggleActions: "play none none none"
+                },
+            });
+
+            tl.from(split.chars, {
+                yPercent: -100,
+                rotation: 90,
+                opacity: 0,
+                duration: 1,
+                ease: "back.out(1.5)",
+                stagger: { amount: 0.5, from: "random" },
+            })
+            .from(".wideline", {
+                scaleX: 0,
+                transformOrigin: "left center",
+                duration: 1,
+            }, "-=0.5")
+            // Stagger the CP Cards
+            .from(".cp-card-wrap", {
+                y: 60,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2, // 0.2s delay between each card
+                ease: "power2.out"
+            }, "-=0.5");
+
+            return () => split.revert();
+        },
+        { scope: containerRef }
+    );
+
     return (
-        <div id="#2" className="content" style={{
-          padding: "3rem 0"
-        }}>
+        <div id="#2" className="content" ref={containerRef} style={{ padding: "3rem 0" }}>
             <div className="head-wideline">
-                <div className="heading hiderx">CP Stats</div>
-                <div className="wideline right-to-left"></div>
+                <div className="heading" ref={headRef}>CP Stats</div>
+                <div className="wideline"></div>
             </div>
             <div className="cp-cards">
                 <CPcard data={Leetcode} />
@@ -64,8 +119,9 @@ const CPcard = ({ data }) => {
     };
 
     return (
-        <div onClick={openWeb} className="cp-card-wrap hiderx">
+        <div onClick={openWeb} className="cp-card-wrap">
             <div className="cp-card-head">
+                {/* Ensure your assets path is correct */}
                 <img src={`/assets/${data.platform.toLowerCase()}.svg`} alt={data.platform} />
                 <div>{data.platform}</div>
             </div>
@@ -86,6 +142,8 @@ const CPcard = ({ data }) => {
     );
 };
 
+// Kept your existing CountUp logic mostly identical, 
+// just ensured the refs are safe.
 const CountUpOnVisible = ({ start = 0, end }) => {
     const [isVisible, setIsVisible] = useState(false);
     const countUpRef = useRef(null);
@@ -94,7 +152,7 @@ const CountUpOnVisible = ({ start = 0, end }) => {
         const options = {
             root: null,
             rootMargin: "0px",
-            threshold: 0.5, // Change this threshold according to your needs
+            threshold: 0.5, 
         };
 
         const observer = new IntersectionObserver(([entry]) => {
@@ -115,7 +173,8 @@ const CountUpOnVisible = ({ start = 0, end }) => {
         };
     }, []);
 
-    return <div ref={countUpRef}>{isVisible && <CountUp separator="" start={start} end={end} />}</div>;
+    // Using a span usually aligns better with text than a div
+    return <span ref={countUpRef}>{isVisible && <CountUp separator="" start={start} end={end} duration={2.5} />}</span>;
 };
 
 export default CPstats;

@@ -55,7 +55,7 @@ const Homepage = () => {
             return () => split.revert();
         },
         { scope: container }
-    ); // Scope ensures GSAP selectors only look inside this component
+    );
 
     return (
         <div className="page-wrap" ref={container}>
