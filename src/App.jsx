@@ -17,7 +17,7 @@ const App = () => {
     const bullets = useRef(null);
     const descend = useRef(null);
 
-    useEffect(() => {
+    useEffect(() => {``
         // Initialize IntersectionObserver when the component mounts
         observer.current = new IntersectionObserver(slider, { threshold: 0.5 });
         bullets.current = new IntersectionObserver(bulletSlider, { threshold: 0.5 });

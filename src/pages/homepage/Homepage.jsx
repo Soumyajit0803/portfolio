@@ -1,68 +1,60 @@
-import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import { faAddressBook } from "@fortawesome/free-solid-svg-icons";
+import React, { useState, useEffect, useRef } from "react";
 import "./Homepage.css";
+import gsap from "gsap";
+import SplitType from "split-type";
+import { useGSAP } from "@gsap/react";
 
 const Homepage = () => {
-    const scrollToBottom = () => {
-        window.scrollTo({
-            top: document.documentElement.scrollHeight,
-            behavior: "smooth",
+    // 1. Create a reference for the container and the text element
+    const container = useRef();
+    const nameRef = useRef();
+
+    useGSAP(() => {
+        // 2. Perform the split INSIDE the hook, where the DOM is guaranteed to exist
+        const split = new SplitType(nameRef.current, { types: "chars" });
+
+        // 3. Animate the split characters
+        gsap.from(split.chars, {
+            yPercent: -100,
+            rotation: 30,
+            opacity: 0,
+            duration: 1.5,
+            ease: "back.out(1.5)",
+            stagger: {
+                amount: 0.5,
+                from: "random",
+            },
         });
-    };
-    const openWeb = () => {
-        window.open("https://github.com/Soumyajit0803", "_blank");
-    };
+
+        // Optional: Revert the split when component unmounts to keep DOM clean
+        return () => split.revert();
+        
+    }, { scope: container }); // Scope ensures GSAP selectors only look inside this component
+
     return (
-        <div className="page-wrap">
+        <div className="page-wrap" ref={container}>
             <div className="content">
                 <img
                     src="/assets/favicon.png"
                     width={25}
-                    style={{
-                        margin: "1rem 0",
-                    }}
-                    className="right-to-left"
+                    style={{ margin: "1rem 0" }}
+                    alt="Logo"
                 />
                 <div className="head-wideline">
                     <div className="salutation">Hi, I'm</div>
                     <div className="wideline right-to-left"></div>
                 </div>
-                <div className="name">Soumyajit</div>
+
+                {/* Attach the ref here so SplitType can find it */}
+                <div className="name" ref={nameRef}>Soumyajit</div>
+
                 <div className="hobby">
-                    I am a
-                    <Dynamic />
+                    I am a <Dynamic />
                 </div>
                 <div className="about">
                     Crafting elegant digital realms by day,
                     <br /> grinding algorithms by night
                 </div>
-                {/* <div className="btn-group">
-                    <div
-                        onClick={openWeb}
-                        style={{
-                            textDecoration: "none",
-                            color: "inherit",
-                            display: "flex",
-                            gap: "10px",
-                        }}
-                    >
-                        <FontAwesomeIcon className="fa-icon" icon={faGithub} />
-                        Github
-                    </div>
-                    <div
-                        style={{
-                            textDecoration: "none",
-                            display: "flex",
-                            gap: "10px",
-                        }}
-                        onClick={scrollToBottom}
-                    >
-                        <FontAwesomeIcon icon={faAddressBook} />
-                        Contact
-                    </div>
-                </div> */}
             </div>
         </div>
     );

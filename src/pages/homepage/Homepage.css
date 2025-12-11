@@ -34,9 +34,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transform-origin: left;
-  animation: appear 0.7s 0.4s forwards;
-  opacity: 0;
   line-height: 0.7em
 }
 
